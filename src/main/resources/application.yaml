@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: quanglynhansu_phongban
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/quanlynhansu?createDatabaseIfNotExist=true
+    username: root
+    password: 09042006
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  config:
+    import: classpath:application-dev.yml
+cloudinary:
+  cloud-name: ${cloudinary.cloud.name}
+  api-key: ${cloudinary.cloud.api-key}
+  api-secret: ${cloudinary.cloud.api-secret}
