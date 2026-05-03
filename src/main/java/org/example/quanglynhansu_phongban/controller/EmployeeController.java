@@ -35,24 +35,46 @@ public class EmployeeController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
-            @RequestParam(defaultValue = "") String keyword
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(required = false) String departmentId,
+            @RequestParam(required = false) String ageFrom,
+            @RequestParam(required = false) String ageTo
     ) {
+        Integer from = (ageFrom == null || ageFrom.isBlank() || ageFrom.equals("null"))
+                ? null : Integer.valueOf(ageFrom);
+
+        Integer to = (ageTo == null || ageTo.isBlank() || ageTo.equals("null"))
+                ? null : Integer.valueOf(ageTo);
+
+        Long depId = (departmentId == null || departmentId.isBlank() || departmentId.equals("null"))
+                ? null : Long.valueOf(departmentId);
+
         Sort sort = direction.equals("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Employee> employeePage = employeeService.findByNameContainingIgnoreCase(keyword, pageable);
+        Page<Employee> employeePage = employeeService.searchAdvanced(
+                keyword,
+                depId,
+                from,
+                to,
+                pageable
+        );
+
         model.addAttribute("employees", employeePage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", employeePage.getTotalPages());
+
         model.addAttribute("keyword", keyword);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("direction", direction);
+        model.addAttribute("departmentId", departmentId);
+        model.addAttribute("ageFrom", ageFrom);
+        model.addAttribute("ageTo", ageTo);
 
         return "list";
     }
-
     @GetMapping("/add")
     public String showForm(Model model) {
         model.addAttribute("employee", new Employee());
